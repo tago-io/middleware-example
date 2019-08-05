@@ -29,6 +29,6 @@ Open [Node.js Installation Guide](https://nodejs.org/en/download/package-manager
 
 1. Open your favorite command-line tool like the Windows Command Prompt, PowerShell, Cygwin, Bash or the Git shell (which is installed along with Github for Windows).  Then create or navigate to your new project folder.
 
-2. Now you must install Tago sdk and Tago-Builder SDK. Enter in your command-line npm install. This will start the installation of the TagoIO SDK.
+2. Now you must install Tago SDK. Enter in your command-line npm install. This will start the installation of the TagoIO SDK.
 
 3. Just run your middleware by using `npm start` or `node index.js`
