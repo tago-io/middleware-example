@@ -6,15 +6,17 @@ const net             = require('net');
 const connector = new TagoConnector('CONNECTOR-TOKEN');
 
 function parsePayload(payload) {
-  const data_obj = {
-    serial: payload.readUInt32LE(1),
-    timestamp: payload.readUInt32LE(5),
-    external_supply_voltage: payload.readUInt8(9) + (payload.readUInt8(10) * 0.01),
-    supply_voltage: payload.readUInt8(11) + (payload.readUInt8(12) * 0.01),
-    battery_voltage: payload.readUInt8(13) + (payload.readUInt8(14) * 0.01),
-    temperature: payload.readInt8(15) + (payload.readUInt8(16) * 0.01),
-    gsm_level: payload.readInt8(17),
-  };
+  const serie = new Date().getTime();
+  
+  const data_obj = [
+    { variable: 'serial', value: payload.readUInt32LE(1), serie },
+    { variable: 'timestamp', value: payload.readUInt32LE(5), serie },
+    { variable: 'external_supply_voltage', value: payload.readUInt8(9) + (payload.readUInt8(10) * 0.01), serie },
+    { variable: 'supply_voltage', value: payload.readUInt8(11) + (payload.readUInt8(12) * 0.01), serie },
+    { variable: 'battery_voltage', value: payload.readUInt8(13) + (payload.readUInt8(14) * 0.01), serie },
+    { variable: 'temperature', value: payload.readInt8(15) + (payload.readUInt8(16) * 0.01), serie },
+    { variable: 'gsm_level', value: payload.readInt8(17), serie }
+  ];
 
   return data_obj;
 }
