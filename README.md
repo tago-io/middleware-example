@@ -6,8 +6,9 @@ First you need to have a connector created at your account on TagoIO.
 2. Create a new connector.
 3. Setup a Name, a Short Description and a Category. Any other field is up to you.
 4. Create the Middleware.
-5. Go to the Tokens section page and generate a new TOKEN.
-6. Copy the Token and replace the CONNECTOR-TOKEN in this code.
+5. Refresh the page. As this page is experimental, you can have issues if not refresh after saving.
+6. Go to the Tokens section page and generate a new TOKEN.
+7. Copy the Token and replace the CONNECTOR-TOKEN in this code.
 
 The Connector Token give access to any device created using your Token. You can parent new connector to your connector in order to use the same token if you need different setups and don't need to have multiple middlewares.
 
