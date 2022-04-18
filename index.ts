@@ -45,7 +45,7 @@ async function dataReceived(msg: Buffer) {
   console.info("data ", data);
   const serial = data.find((e) => e.variable == "serial").value.toString();
 
-  const token = await network.resolveToken(serial);
+  const token = await network.resolveToken(serial).catch(() => null);
   if (!token) {
     return console.log(`Token not found, serie: ${serial}`);
   }
