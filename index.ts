@@ -43,7 +43,11 @@ function parsePayload(payload: Buffer) {
 async function dataReceived(msg: Buffer) {
   const data = parsePayload(msg);
   console.info("data ", data);
-  const serial = data.find((e) => e.variable == "serial").value.toString();
+  const serial = data.find((e) => e.variable == "serial")?.value.toString();
+
+  if (!serial) {
+    return console.log(`Serial not found`);
+  }
 
   const token = await network.resolveToken(serial).catch(() => null);
   if (!token) {
