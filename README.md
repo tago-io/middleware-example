@@ -14,6 +14,8 @@ for your device, set your tokens, and run it with pnpm, pm2, or Docker.
 1. The middleware listens for raw bytes on a TCP port and splits the stream into
    complete frames on a delimiter (default newline). TCP is a byte stream, so it
    buffers partial frames and splits batched ones (see `src/utils/framing.ts`).
+   A peer that never sends the delimiter would grow the buffer without bound, so
+   a frame larger than `MAX_FRAME_LENGTH` drops the connection.
 2. Each complete frame is passed to `parseFrame` (see `src/utils/payload.ts`),
    which returns the device `serial` (a string, any format) and the `value` to
    send. The default expects a text frame `serial,value`.
@@ -79,6 +81,7 @@ cp .env.example .env
 | `TAGO_API_URL`        | no       | `https://api.us-e1.tago.io` | API base URL for your account region     |
 | `PORT`                | no       | `3338`                      | TCP port the middleware listens on       |
 | `FRAME_DELIMITER`     | no       | `\n`                        | Byte sequence marking the end of a frame |
+| `MAX_FRAME_LENGTH`    | no       | `65536`                     | Max bytes buffered for one frame before the connection is dropped |
 
 The middleware fails to start if a required variable is missing.
 
@@ -209,6 +212,10 @@ docker compose up --build
   message arrived without the trailing delimiter, so it was never processed. This
   is the usual cause when `printf` is missing the `\n`. Terminate each message
   with `FRAME_DELIMITER`.
+- `Dropping connection: ... Frame exceeded maxFrameLength`: a frame grew past
+  `MAX_FRAME_LENGTH` without a delimiter, so the connection was closed. Usually
+  the device is not sending `FRAME_DELIMITER`; confirm the delimiter matches, or
+  raise `MAX_FRAME_LENGTH` if your frames are legitimately larger.
 - No data on the device: confirm the device serial matches and that the device
   uses the Connector tied to your Network.
 - Docker requests never reach the middleware: the published port must match

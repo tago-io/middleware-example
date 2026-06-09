@@ -40,10 +40,24 @@ async function handleFrame(frame: string, socket: net.Socket) {
 const server = net.createServer((socket) => {
 	// One splitter per connection: TCP may fragment or batch messages, so we
 	// accumulate bytes and only act on complete, delimited frames.
-	const splitter = createFrameSplitter(config.frameDelimiter);
+	const splitter = createFrameSplitter({
+		delimiter: config.frameDelimiter,
+		maxFrameLength: config.maxFrameLength,
+	});
 
 	socket.on("data", (chunk) => {
-		for (const frame of splitter.push(chunk)) {
+		let frames: string[];
+		try {
+			frames = splitter.push(chunk);
+		} catch (error) {
+			// A frame grew past maxFrameLength without a delimiter: a misbehaving
+			// or malicious peer. Drop the connection so it can't exhaust memory.
+			console.warn("Dropping connection:", error);
+			socket.destroy();
+			return;
+		}
+
+		for (const frame of frames) {
 			handleFrame(frame, socket).catch((error) =>
 				console.error("Failed to handle frame:", error),
 			);

@@ -17,12 +17,11 @@ const required = (name: string) => {
 };
 
 // Frame delimiter that marks the end of one device message in the TCP stream.
-// Written in .env as an escaped sequence (default "\n"); decode it to raw bytes.
-const frameDelimiter = Buffer.from(
-	(process.env.FRAME_DELIMITER ?? "\\n")
-		.replace(/\\n/g, "\n")
-		.replace(/\\r/g, "\r"),
-);
+// Written in .env as an escaped sequence (default "\n"); decode it to the real
+// characters. Frames are text, so the splitter works on strings directly.
+const frameDelimiter = (process.env.FRAME_DELIMITER ?? "\\n")
+	.replace(/\\n/g, "\n")
+	.replace(/\\r/g, "\r");
 
 const config = {
 	networkToken: required("NETWORK_TOKEN"),
@@ -30,6 +29,10 @@ const config = {
 	apiUrl: process.env.TAGO_API_URL ?? "https://api.us-e1.tago.io",
 	port: Number(process.env.PORT ?? 3338),
 	frameDelimiter,
+	// Cap on buffered bytes for a single frame. A device that never sends the
+	// delimiter would otherwise grow the buffer until the process runs out of
+	// memory; past this size the connection is dropped instead.
+	maxFrameLength: Number(process.env.MAX_FRAME_LENGTH ?? 65536),
 };
 
 export { config };
