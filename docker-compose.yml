@@ -1,0 +1,7 @@
+services:
+  middleware:
+    build: .
+    env_file: .env
+    ports:
+      - "${PORT:-3338}:${PORT:-3338}"
+    restart: unless-stopped

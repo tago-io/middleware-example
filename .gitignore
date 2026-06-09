@@ -1,3 +1,9 @@
+# Build output
+dist
+
+# Environment
+.env
+
 # Logs
 logs
 *.log
@@ -28,6 +34,7 @@ build/Release
 node_modules
 .settings
 .vscode
+.claude
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*

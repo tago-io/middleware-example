@@ -1,0 +1,6 @@
+allowBuilds:
+  esbuild: true
+# esbuild ships a native binary built by a postinstall script. tsx depends on it
+# for `pnpm dev` and `pnpm test`, so allow its build to run.
+onlyBuiltDependencies:
+  - esbuild
