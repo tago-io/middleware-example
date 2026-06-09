@@ -14,8 +14,11 @@ async function _resolveDevice(serial: string) {
 	const token = await network
 		.resolveToken(serial, config.authorizationToken)
 		.catch((error: unknown) => {
+			// Pass serial as an argument instead of interpolating it: it comes from
+			// device data and must not land in the format-string position.
 			console.error(
-				`Could not resolve device-token for serial ${serial}:`,
+				"Could not resolve device-token for serial %s:",
+				serial,
 				error,
 			);
 			return null;
@@ -43,9 +46,9 @@ async function sendToNetwork(serial: string, payloadHex: string) {
 
 	await device
 		.sendData({ variable: "payload", value: payloadHex })
-		.then((result) => console.info(`Data sent for serial ${serial}:`, result))
+		.then((result) => console.info("Data sent for serial %s:", serial, result))
 		.catch((error: unknown) =>
-			console.error(`Send failed for serial ${serial}:`, error),
+			console.error("Send failed for serial %s:", serial, error),
 		);
 
 	return device;

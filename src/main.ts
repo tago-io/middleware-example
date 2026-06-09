@@ -14,7 +14,8 @@ import { createFrameSplitter } from "./utils/framing.js";
 async function handleFrame(frame: string, socket: net.Socket) {
 	const parsed = parseFrame(frame);
 	if (!parsed) {
-		console.warn(`Skipping frame without a serial: ${frame}`);
+		// frame is device data: keep it out of the format-string position.
+		console.warn("Skipping frame without a serial: %s", frame);
 		return;
 	}
 
@@ -29,7 +30,9 @@ async function handleFrame(frame: string, socket: net.Socket) {
 	if (downlink) {
 		socket.write(downlink);
 		console.info(
-			`Downlink sent to serial ${parsed.serial} (${downlink.length} bytes)`,
+			"Downlink sent to serial %s (%d bytes)",
+			parsed.serial,
+			downlink.length,
 		);
 	}
 }
@@ -54,7 +57,8 @@ const server = net.createServer((socket) => {
 		const unterminated = splitter.pending();
 		if (unterminated) {
 			console.warn(
-				`Connection closed with an unterminated frame (missing FRAME_DELIMITER): ${unterminated}`,
+				"Connection closed with an unterminated frame (missing FRAME_DELIMITER): %s",
+				unterminated,
 			);
 		}
 	});
